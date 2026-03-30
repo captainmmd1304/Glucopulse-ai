@@ -1,55 +1,169 @@
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-manrope: "Manrope", sans-serif;
-  --font-inter: "Inter", sans-serif;
+  --font-manrope: "Sora", sans-serif;
+  --font-inter: "Plus Jakarta Sans", sans-serif;
 
-  --color-primary: #005c55;
-  --color-primary-container: #0f766e;
-  --color-on-primary: #ffffff;
-  --color-on-primary-container: #a3faef;
-  
-  --color-secondary: #4b41e1;
-  --color-secondary-container: #645efb;
-  --color-secondary-fixed: #e2dfff;
-  
-  --color-tertiary: #a50031;
-  --color-tertiary-container: #cc1e44;
-  
-  --color-surface: #f7f9fb;
-  --color-surface-container-low: #f2f4f6;
-  --color-surface-container-lowest: #ffffff;
-  --color-surface-container-high: #e6e8ea;
-  --color-surface-container-highest: #e0e3e5;
-  
-  --color-on-surface: #191c1e;
-  --color-on-surface-variant: #3e4947;
-  
-  --radius-xl: 1.5rem;
-  --radius-2xl: 2rem;
+  --color-primary: #2ad7c4;
+  --color-primary-container: #0d7369;
+  --color-on-primary: #031613;
+  --color-on-primary-container: #9bf8ee;
+
+  --color-secondary: #7c86ff;
+  --color-secondary-container: #4b52ba;
+  --color-secondary-fixed: #d7dbff;
+
+  --color-tertiary: #ff6f95;
+  --color-tertiary-container: #bf365f;
+
+  --color-surface: #060a14;
+  --color-surface-container-low: #0b1323;
+  --color-surface-container-lowest: #0f182d;
+  --color-surface-container-high: #18243d;
+  --color-surface-container-highest: #233352;
+
+  --color-on-surface: #f3f8ff;
+  --color-on-surface-variant: #94a6c6;
+
+  --radius-xl: 1.25rem;
+  --radius-2xl: 1.75rem;
+
+  --ease-standard: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-snappy: cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 @layer base {
+  * {
+    @apply border-surface-container-high;
+  }
+
   body {
     @apply font-inter bg-surface text-on-surface antialiased;
+    background-image: radial-gradient(circle at 16% -10%, rgb(42 215 196 / 0.18), transparent 36%), radial-gradient(circle at 90% 0%, rgb(124 134 255 / 0.12), transparent 38%);
+    letter-spacing: -0.005em;
   }
-  
+
   h1, h2, h3, h4, h5, h6 {
     @apply font-manrope;
+    letter-spacing: -0.02em;
   }
 }
 
 @layer components {
+  .app-shell {
+    background: linear-gradient(180deg, rgb(7 12 22 / 0.95), rgb(6 10 20 / 1));
+  }
+
   .ai-pulse-gradient {
     background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-container) 100%);
   }
-  
-  .glass-panel {
-    @apply bg-surface-container-lowest/80 backdrop-blur-[20px];
+
+  .tech-grid {
+    background-image: linear-gradient(rgb(148 166 198 / 0.08) 1px, transparent 1px), linear-gradient(90deg, rgb(148 166 198 / 0.08) 1px, transparent 1px);
+    background-size: 52px 52px;
   }
-  
+
+  .glass-panel {
+    @apply bg-surface-container-lowest/70 backdrop-blur-xl border border-white/8;
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.06);
+  }
+
+  .panel {
+    @apply rounded-3xl border border-surface-container-high/70 bg-surface-container-lowest/90;
+    transition: transform 220ms var(--ease-standard), border-color 220ms var(--ease-standard), box-shadow 220ms var(--ease-standard), background-color 220ms var(--ease-standard);
+    box-shadow: 0 16px 40px rgb(2 8 20 / 0.42), inset 0 1px 0 rgb(255 255 255 / 0.04);
+  }
+
+  .panel-soft {
+    @apply rounded-2xl border border-surface-container-high/60 bg-surface-container-low/80;
+    transition: border-color 220ms var(--ease-standard), background-color 220ms var(--ease-standard), transform 220ms var(--ease-standard);
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-2 rounded-full border border-surface-container-high bg-surface-container-low px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-on-surface-variant;
+  }
+
+  .btn-primary {
+    @apply rounded-full px-6 py-3 font-semibold text-on-primary transition-all duration-300 hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60;
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-container) 100%);
+    box-shadow: 0 8px 24px rgb(42 215 196 / 0.28);
+    transition-timing-function: var(--ease-snappy);
+  }
+
+  .btn-secondary {
+    @apply rounded-full border border-surface-container-high bg-surface-container-low px-6 py-3 font-semibold text-on-surface transition-all duration-300 hover:border-primary/60 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/45;
+    transition-timing-function: var(--ease-snappy);
+  }
+
+  .interactive-lift {
+    transition: transform 220ms var(--ease-standard), box-shadow 220ms var(--ease-standard), border-color 220ms var(--ease-standard);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .interactive-lift:hover {
+      transform: translateY(-2px);
+    }
+  }
+
+  .reveal {
+    animation: reveal-up 520ms var(--ease-standard) both;
+  }
+
+  .reveal-delay-1 {
+    animation-delay: 70ms;
+  }
+
+  .reveal-delay-2 {
+    animation-delay: 140ms;
+  }
+
+  .reveal-delay-3 {
+    animation-delay: 210ms;
+  }
+
   .ambient-shadow {
-    box-shadow: 0px 12px 32px rgba(15, 23, 42, 0.04);
+    box-shadow: 0 12px 32px rgb(3 9 21 / 0.35);
+  }
+}
+
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .reveal {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .interactive-lift,
+  .panel,
+  .panel-soft,
+  .btn-primary,
+  .btn-secondary {
+    transition: none !important;
+  }
+
+  .interactive-lift:hover {
+    transform: none !important;
   }
 }

@@ -8,7 +8,7 @@ import { ExplanationPage } from './components/ExplanationPage';
 export default function App() {
   return (
     <Router>
-      <div className="min-h-screen flex flex-col">
+      <div className="app-shell min-h-screen flex flex-col tech-grid">
         <Navbar />
         <main className="flex-grow">
           <Routes>
