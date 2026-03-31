@@ -2,83 +2,36 @@ import React from 'react';
 import { motion, useReducedMotion } from 'motion/react';
 import { ShieldCheck, ArrowRight, Activity, Database, RefreshCw, ClipboardList } from 'lucide-react';
 import { Link } from 'react-router-dom';
+// @ts-ignore
+import heroPulseSvg from '../assets/hero-pulse.svg?raw';
 
 const HeroVisual: React.FC = () => {
   const reduceMotion = useReducedMotion();
 
   return (
-    <div className="lg:col-span-6 relative mt-12 lg:mt-0">
-      <div className="grid grid-cols-2 gap-4 lg:gap-5 relative z-10">
-        <motion.div
-          initial={reduceMotion ? false : { opacity: 0, x: 20 }}
-          animate={reduceMotion ? { opacity: 1 } : { opacity: 1, x: 0 }}
-          transition={reduceMotion ? { duration: 0 } : { delay: 0.2 }}
-          className="panel p-6 lg:p-7 h-full interactive-lift"
-        >
-          <Activity className="text-secondary mb-4 w-6 h-6 lg:w-8 lg:h-8" />
-          <div className="text-[10px] font-semibold text-secondary uppercase tracking-[0.16em] mb-2">Step 01</div>
-          <h3 className="font-manrope font-bold text-lg lg:text-xl mb-4 text-on-surface">Data Ingestion</h3>
-          <div className="flex flex-col justify-end gap-3 h-16 pb-1">
-            <div className="h-1.5 w-full bg-surface-container-high rounded-full overflow-hidden">
-              <div className="h-full bg-secondary w-3/4"></div>
-            </div>
-            <div className="h-1.5 w-full bg-surface-container-high rounded-full overflow-hidden">
-              <div className="h-full bg-secondary w-1/2"></div>
-            </div>
-          </div>
-        </motion.div>
+    <div className="lg:col-span-5 relative mt-12 lg:mt-0 flex items-center justify-end">
+      <div className="relative w-full">
+        {/* Subtle glow background */}
+        <div className="absolute inset-0 bg-gradient-radial from-primary/10 via-secondary/8 to-transparent rounded-full blur-lg scale-110"></div>
 
+        {/* Floating animation container */}
         <motion.div
-          initial={reduceMotion ? false : { opacity: 0, x: 20 }}
-          animate={reduceMotion ? { opacity: 1 } : { opacity: 1, x: 0 }}
-          transition={reduceMotion ? { duration: 0 } : { delay: 0.4 }}
-          className="glass-panel p-6 lg:p-7 rounded-3xl interactive-lift"
+          animate={reduceMotion ? {} : { y: [0, -10, 0] }}
+          transition={reduceMotion ? {} : { duration: 6, repeat: Infinity, ease: "easeInOut" }}
+          className="relative z-10 scale-125"
         >
-          <RefreshCw className="text-primary mb-4 w-6 h-6 lg:w-8 lg:h-8" />
-          <div className="text-[10px] font-semibold text-primary uppercase tracking-[0.16em] mb-2">Step 02</div>
-          <h3 className="font-manrope font-bold text-lg lg:text-xl mb-4 text-on-surface">AI Neural Risk</h3>
-          <div className="flex items-end gap-1.5 h-16">
-            {[4, 8, 12, 6, 10].map((h, i) => (
-              <div
-                key={i}
-                className={`w-2.5 bg-primary/${(i + 1) * 20} rounded-t-sm`}
-                style={{ height: `${h * 4}px` }}
-              ></div>
-            ))}
-          </div>
-        </motion.div>
-
-        <motion.div
-          initial={reduceMotion ? false : { opacity: 0, y: 20 }}
-          animate={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
-          transition={reduceMotion ? { duration: 0 } : { delay: 0.6 }}
-          className="panel p-6 lg:p-7 col-span-2 interactive-lift"
-        >
-          <div className="flex flex-col sm:flex-row justify-between sm:items-start mb-6 gap-3 sm:gap-0">
-            <div>
-              <div className="text-[10px] font-semibold text-tertiary uppercase tracking-[0.16em] mb-2">Step 03</div>
-              <h3 className="font-manrope font-bold text-lg lg:text-xl">Risk Breakdown</h3>
-            </div>
-            <div className="bg-tertiary-container/80 border border-tertiary/35 px-4 py-1.5 rounded-full text-[10px] font-bold text-on-surface w-fit">
-              MODERATE RISK
-            </div>
-          </div>
-          <div className="grid grid-cols-3 gap-3 lg:gap-6">
-            {[
-              { label: 'Glycemic Index', val: '84.2' },
-              { label: 'Systolic BP', val: '132' },
-              { label: 'BMI Ref', val: '24.1' }
-            ].map((item) => (
-              <div key={item.label} className="panel-soft p-3 lg:p-4 interactive-lift">
-                <div className="text-[10px] lg:text-xs text-on-surface-variant font-medium mb-1 truncate uppercase tracking-[0.12em]">{item.label}</div>
-                <div className="text-xl lg:text-2xl font-extrabold text-on-surface">{item.val}</div>
-              </div>
-            ))}
-          </div>
+          {/* Opacity pulse animation */}
+          <motion.div
+            animate={reduceMotion ? {} : { opacity: [0.9, 1, 0.9] }}
+            transition={reduceMotion ? {} : { duration: 4, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <div 
+              className="w-full h-auto" 
+              dangerouslySetInnerHTML={{ __html: heroPulseSvg }} 
+            />
+          </motion.div>
         </motion.div>
       </div>
-
-      <div className="absolute -z-10 inset-0 bg-[radial-gradient(circle_at_42%_44%,rgba(124,134,255,0.18),transparent_52%)]"></div>
     </div>
   );
 };
@@ -87,26 +40,26 @@ const HeroSection: React.FC = () => {
   const reduceMotion = useReducedMotion();
 
   return (
-    <section className="relative pt-14 lg:pt-20 pb-20 lg:pb-24 overflow-hidden px-5 lg:px-10">
-      <div className="max-w-screen-2xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
+    <section className="relative pt-14 lg:pt-20 pb-16 lg:pb-20 overflow-hidden px-5 lg:px-10">
+      <div className="max-w-screen-2xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
         <motion.div
           initial={reduceMotion ? false : { opacity: 0, y: 20 }}
           animate={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
           transition={reduceMotion ? { duration: 0 } : { duration: 0.6 }}
-          className="lg:col-span-6 z-10 reveal"
+          className="lg:col-span-7 z-10 reveal"
         >
           <div className="chip mb-6 lg:mb-7 border-primary/30 bg-primary/8 text-primary">
             <ShieldCheck size={14} className="mr-2" />
             FDA-aligned clinical framework
           </div>
-          <h1 className="font-manrope font-semibold text-4xl sm:text-5xl lg:text-6xl xl:text-7xl text-on-surface leading-[1.04] tracking-[-0.025em] mb-6 lg:mb-7">
+          <h1 className="font-manrope font-semibold text-4xl sm:text-5xl lg:text-6xl xl:text-7xl text-on-surface leading-[1.04] tracking-[-0.025em] mb-5 lg:mb-6">
             Predict earlier.
             <br className="hidden sm:block" />
             Intervene smarter.
             <br className="hidden sm:block" />
             <span className="text-primary">Improve outcomes.</span>
           </h1>
-          <p className="text-base sm:text-lg lg:text-xl text-on-surface-variant max-w-xl mb-10 lg:mb-11 leading-relaxed">
+          <p className="text-base sm:text-lg lg:text-xl text-on-surface-variant max-w-xl mb-8 lg:mb-10 leading-relaxed">
             Predict diabetes and hypertension risk earlier, with tailored guidance grounded in your clinical and lifestyle profile.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
