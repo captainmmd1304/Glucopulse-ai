@@ -25,9 +25,9 @@ const HeroVisual: React.FC = () => {
             animate={reduceMotion ? {} : { opacity: [0.9, 1, 0.9] }}
             transition={reduceMotion ? {} : { duration: 4, repeat: Infinity, ease: "easeInOut" }}
           >
-            <div 
-              className="w-full h-auto" 
-              dangerouslySetInnerHTML={{ __html: heroPulseSvg }} 
+            <div
+              className="w-full h-auto"
+              dangerouslySetInnerHTML={{ __html: heroPulseSvg }}
             />
           </motion.div>
         </motion.div>
@@ -80,7 +80,7 @@ const HeroSection: React.FC = () => {
 
 const StatsSection: React.FC = () => {
   const stats = [
-    { label: 'Model Accuracy', val: '99.4%' },
+    { label: 'Model Accuracy', val: '92.4%' },
     { label: 'Clinical Data Points', val: '12M+' },
     { label: 'Inference Latency', val: '0.02s' },
     { label: 'Compliant Security', val: 'HIPAA' }
@@ -154,7 +154,7 @@ const ClinicalIntelligenceSection: React.FC = () => {
               </p>
             </div>
             <ul className="mt-10 lg:mt-12 space-y-4 lg:space-y-6">
-              {['Personalized Nutrition Logic', 'Blood Pressure Benchmarking', 'Circadian Stress Analysis'].map(item => (
+              {['Personalized Nutrition Logic', 'Circadian Stress Analysis'].map(item => (
                 <li key={item} className="flex items-center gap-3 lg:gap-4 text-sm lg:text-base font-medium">
                   <div className="w-5 h-5 lg:w-6 lg:h-6 rounded-full bg-secondary/30 flex items-center justify-center shrink-0">
                     <div className="w-1.5 h-1.5 lg:w-2 lg:h-2 rounded-full bg-secondary"></div>
@@ -169,7 +169,7 @@ const ClinicalIntelligenceSection: React.FC = () => {
             <ClipboardList className="text-tertiary mb-6 lg:mb-8 w-10 h-10 lg:w-12 lg:h-12" />
             <h3 className="font-manrope font-semibold text-2xl lg:text-3xl text-on-surface mb-4 lg:mb-6">Genetic Context</h3>
             <p className="text-on-surface-variant text-base lg:text-lg leading-relaxed">
-              Integrating familial clinical history to refine susceptibility models for type 2 diabetes.
+              Integrating familial clinical history to refine susceptibility models for type 1 diabetes.
             </p>
           </div>
 
