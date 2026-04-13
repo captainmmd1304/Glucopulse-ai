@@ -1,0 +1,84 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String    @id @default(uuid())
+  email        String    @unique
+  passwordHash String
+  role         Role      @default(USER) // Enum: USER, ADMIN, DOCTOR
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  profile      Profile?
+  readings     GlucoseReading[]
+  notifications Notification[]
+  activityLogs ActivityLog[]
+}
+
+model Profile {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  firstName String
+  lastName  String
+  dob       DateTime?
+  gender    String?
+  diabeticType String? // e.g., Type 1, Type 2, Gestational
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model GlucoseReading {
+  id         String   @id @default(uuid())
+  userId     String   
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  level      Float    // mg/dL or mmol/L
+  recordedAt DateTime @default(now())
+  mealStatus MealContext? // Enum: FASTING, BEFORE_MEAL, AFTER_MEAL, RANDOM
+  notes      String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([userId, recordedAt])
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model ActivityLog {
+  id        String   @id @default(uuid())
+  userId    String?  // Nullable if system event
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  eventType String   // e.g., "LOGIN_SUCCESS", "READING_ADDED"
+  metadata  Json?    // Analytics-ready event storage
+  ipAddress String?
+  createdAt DateTime @default(now())
+
+  @@index([userId, eventType])
+}
+
+enum Role {
+  USER
+  ADMIN
+  DOCTOR
+}
+
+enum MealContext {
+  FASTING
+  BEFORE_MEAL
+  AFTER_MEAL
+  RANDOM
+}
