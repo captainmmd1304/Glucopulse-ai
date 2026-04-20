@@ -32,10 +32,12 @@ app.get('/', (req: Request, res: Response) => {
 import authRoutes from './routes/auth.routes';
 import dashboardRoutes from './routes/dashboard.routes';
 import clinicalRoutes from './routes/clinical.routes';
+import predictRoutes from './routes/predict.routes';
 
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/dashboard', dashboardRoutes);
 app.use('/api/v1/clinical', clinicalRoutes);
+app.use('/api/v1/predict', predictRoutes);
 
 // Global 404 Handler
 app.use((req: Request, res: Response) => {

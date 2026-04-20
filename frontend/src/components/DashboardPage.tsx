@@ -1,11 +1,20 @@
+import { useState, useEffect } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
-import { Brain, Clipboard, Heart, Utensils, Calendar, ChevronRight, ShieldCheck, ArrowUpRight } from 'lucide-react';
+import { Brain, Clipboard, Heart, Utensils, Calendar, ChevronRight, ShieldCheck, ArrowUpRight, Loader2, Sparkles } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { dashboardApi } from '../lib/api';
 
-const factorData = [
-  { label: 'Glycemic Load', sub: 'Dominant metabolic driver', impact: 42 },
-  { label: 'Family History', sub: 'Inherited susceptibility profile', impact: 28 },
-  { label: 'Lifestyle Habits', sub: 'Sleep and activity alignment', impact: 15 }
-];
+interface OverviewData {
+  progressionRisk: { score: number; trajectory: string; level: string; subtitle: string };
+  bloodPressureSignal: { score: number; level: string; text: string };
+}
+
+interface RiskFactor {
+  label: string;
+  sub: string;
+  impact: number;
+}
 
 const directives = [
   { icon: Utensils, title: 'Fiber Titration', desc: 'Increase soluble fiber intake to 35g/day to reduce post-prandial glucose spikes.' },
@@ -15,6 +24,62 @@ const directives = [
 
 export function DashboardPage() {
   const reduceMotion = useReducedMotion();
+  const { token } = useAuth();
+  const [overview, setOverview] = useState<OverviewData | null>(null);
+  const [riskFactors, setRiskFactors] = useState<RiskFactor[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (!token) return;
+
+    const fetchData = async () => {
+      try {
+        const [overviewRes, riskRes] = await Promise.all([
+          dashboardApi.getOverview(token),
+          dashboardApi.getRiskFactors(token),
+        ]);
+        setOverview(overviewRes.data);
+        setRiskFactors(riskRes.data);
+      } catch (err: any) {
+        setError(err.message || 'Failed to load dashboard data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [token]);
+
+  if (loading) {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="w-10 h-10 text-primary animate-spin" />
+          <p className="text-sm text-on-surface-variant font-medium">Loading dashboard…</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-[40vh] flex items-center justify-center px-5">
+        <div className="panel p-8 text-center max-w-md">
+          <p className="text-tertiary font-semibold mb-2">Error loading data</p>
+          <p className="text-sm text-on-surface-variant">{error}</p>
+        </div>
+      </div>
+    );
+  }
+
+  const progressionRisk = overview?.progressionRisk ?? { score: 42, trajectory: '+6%', level: 'Moderate', subtitle: '' };
+  const bpSignal = overview?.bloodPressureSignal ?? { score: 18, level: 'Low', text: '' };
+  const factors = riskFactors.length > 0 ? riskFactors : [
+    { label: 'Glycemic Load', sub: 'Dominant metabolic driver', impact: 42 },
+    { label: 'Family History', sub: 'Inherited susceptibility profile', impact: 28 },
+    { label: 'Lifestyle Habits', sub: 'Sleep and activity alignment', impact: 15 }
+  ];
 
   return (
     <div className="max-w-screen-2xl mx-auto px-5 lg:px-10 py-10 lg:py-12">
@@ -47,24 +112,24 @@ export function DashboardPage() {
               <p className="text-[10px] uppercase tracking-[0.16em] text-on-surface-variant font-semibold">Primary Risk Signal</p>
               <h2 className="font-manrope text-2xl lg:text-3xl font-semibold mt-1">Diabetes Progression Risk</h2>
             </div>
-            <div className="chip border-amber-400/40 bg-amber-400/12 text-amber-300">Moderate</div>
+            <div className="chip border-amber-400/40 bg-amber-400/12 text-amber-300">{progressionRisk.level}</div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-5 mb-6">
             <div className="panel-soft p-4 md:col-span-2">
               <div className="flex items-end gap-2">
-                <span className="font-manrope text-5xl sm:text-6xl font-bold leading-none text-amber-300">42</span>
+                <span className="font-manrope text-5xl sm:text-6xl font-bold leading-none text-amber-300">{progressionRisk.score}</span>
                 <span className="text-on-surface-variant text-xl pb-1">/ 100</span>
               </div>
               <p className="text-sm text-on-surface-variant mt-3 leading-relaxed">
-                Elevated post-prandial glycemic variability observed across the most recent 14 monitoring cycles.
+                {progressionRisk.subtitle || 'Elevated post-prandial glycemic variability observed across the most recent 14 monitoring cycles.'}
               </p>
             </div>
 
             <div className="panel-soft p-4 flex flex-col justify-between">
               <div>
                 <p className="text-[10px] uppercase tracking-[0.14em] text-on-surface-variant font-semibold">Trajectory</p>
-                <p className="font-manrope text-lg font-semibold mt-1">+6% upward drift</p>
+                <p className="font-manrope text-lg font-semibold mt-1">{progressionRisk.trajectory} upward drift</p>
               </div>
               <div className="inline-flex items-center gap-1 text-xs text-secondary font-semibold mt-4">
                 Last 30 days
@@ -79,8 +144,12 @@ export function DashboardPage() {
             </svg>
           </div>
 
-          <div className="flex flex-wrap gap-3">
-            <button className="btn-primary interactive-lift">Review Clinical Data</button>
+          <div className="flex flex-wrap gap-3 mt-4">
+            <Link to="/predict" className="btn-primary inline-flex items-center gap-2 interactive-lift">
+              <Sparkles size={18} />
+              Run AI Risk Assessment
+            </Link>
+            <button className="btn-secondary interactive-lift">Review Clinical Data</button>
             <button className="btn-secondary interactive-lift">Export Report</button>
           </div>
         </motion.article>
@@ -88,16 +157,16 @@ export function DashboardPage() {
         <motion.aside whileHover={reduceMotion ? undefined : { y: -2 }} className="xl:col-span-4 rounded-3xl border border-primary/35 bg-primary/10 p-6 lg:p-7 reveal reveal-delay-1 interactive-lift">
           <div className="flex items-center justify-between mb-6">
             <h3 className="font-manrope text-xl font-semibold">Blood Pressure Signal</h3>
-            <div className="chip border-primary/35 bg-primary/12 text-primary">Low</div>
+            <div className="chip border-primary/35 bg-primary/12 text-primary">{bpSignal.level}</div>
           </div>
 
           <div className="flex items-end gap-2 mb-4">
-            <span className="font-manrope text-5xl sm:text-6xl font-bold text-primary leading-none">18</span>
+            <span className="font-manrope text-5xl sm:text-6xl font-bold text-primary leading-none">{bpSignal.score}</span>
             <span className="text-on-surface-variant text-xl pb-1">/ 100</span>
           </div>
 
           <p className="text-sm text-on-surface-variant leading-relaxed mb-6">
-            Systolic and diastolic readings remain within stable range during nocturnal recovery.
+            {bpSignal.text || 'Systolic and diastolic readings remain within stable range during nocturnal recovery.'}
           </p>
 
             <button className="btn-secondary inline-flex items-center gap-2 interactive-lift">
@@ -115,7 +184,7 @@ export function DashboardPage() {
           </div>
 
           <div className="space-y-6">
-            {factorData.map((item) => (
+            {factors.map((item) => (
               <div key={item.label} className="panel-soft p-4 interactive-lift">
                 <div className="flex justify-between items-end mb-2.5 gap-4">
                   <div>

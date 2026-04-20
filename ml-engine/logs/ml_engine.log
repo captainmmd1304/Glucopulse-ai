@@ -1,0 +1,41 @@
+23:22:11 | app                      | INFO  | ============================================================
+23:22:11 | app                      | INFO  |   GlucoPulse ML Engine starting...
+23:22:11 | app                      | INFO  | ============================================================
+23:22:11 | model.loader             | INFO  | Loading model artifacts...
+23:22:11 | model.loader             | INFO  |   ✓ Model loaded (XGBClassifier)
+23:22:11 | model.loader             | INFO  |   ✓ Preprocessing pipeline loaded
+23:22:11 | model.loader             | INFO  | ✅ All artifacts ready for inference.
+23:23:43 | services.predictor       | INFO  | Prediction: 94.6% (High Risk), confidence: 89.3%
+23:23:43 | services.explainer       | INFO  | Top 3 risk drivers: ['Age', 'Family History of Diabetes', 'Stress × Sleep Impact']
+23:23:43 | routes.predict           | INFO  | Prediction completed in 54.4ms
+23:24:00 | services.predictor       | INFO  | Prediction: 0.0% (Low Risk), confidence: 100.0%
+23:24:00 | services.explainer       | INFO  | Top 3 risk drivers: ['Body Mass Index', 'Age', 'Family History of Diabetes']
+23:24:00 | routes.predict           | INFO  | Prediction completed in 36.7ms
+12:24:11 | app                      | INFO  | ============================================================
+12:24:11 | app                      | INFO  |   GlucoPulse ML Engine starting...
+12:24:11 | app                      | INFO  | ============================================================
+12:24:11 | model.loader             | INFO  | Loading model artifacts...
+12:24:11 | model.loader             | INFO  |   [OK] Model loaded (XGBClassifier)
+12:24:11 | model.loader             | INFO  |   [OK] Preprocessing pipeline loaded
+12:24:11 | model.loader             | INFO  | [READY] All artifacts ready for inference.
+12:24:50 | app                      | INFO  | Shutting down ML Engine...
+12:26:27 | app                      | INFO  | ============================================================
+12:26:27 | app                      | INFO  |   GlucoPulse ML Engine starting...
+12:26:27 | app                      | INFO  | ============================================================
+12:26:27 | model.loader             | INFO  | Loading model artifacts...
+12:26:27 | model.loader             | INFO  |   [OK] Model loaded (XGBClassifier)
+12:26:27 | model.loader             | INFO  |   [OK] Preprocessing pipeline loaded
+12:26:27 | model.loader             | INFO  | [READY] All artifacts ready for inference.
+12:39:21 | services.predictor       | INFO  | Prediction: 0.0% (Low Risk), confidence: 100.0%
+12:39:21 | services.explainer       | INFO  | Top 3 risk drivers: ['Body Mass Index', 'Age', 'Family History of Diabetes']
+12:39:21 | routes.predict           | INFO  | Prediction completed in 801.5ms
+12:43:14 | services.predictor       | INFO  | Prediction: 0.0% (Low Risk), confidence: 100.0%
+12:43:14 | services.explainer       | INFO  | Top 3 risk drivers: ['Body Mass Index', 'Age', 'Central Adiposity Score']
+12:43:14 | routes.predict           | INFO  | Prediction completed in 56.7ms
+12:48:40 | services.predictor       | INFO  | Prediction: 81.7% (High Risk), confidence: 63.4%
+12:48:40 | services.explainer       | INFO  | Top 3 risk drivers: ['Body Mass Index', 'Age', 'Family History of Diabetes']
+12:48:40 | routes.predict           | INFO  | Prediction completed in 50.2ms
+12:53:37 | services.predictor       | INFO  | Prediction: 1.1% (Low Risk), confidence: 97.7%
+12:53:37 | services.explainer       | INFO  | Top 3 risk drivers: ['Age', 'Body Mass Index', 'Family History of Diabetes']
+12:53:37 | routes.predict           | INFO  | Prediction completed in 50.2ms
+12:55:26 | app                      | INFO  | Shutting down ML Engine...

@@ -2,6 +2,7 @@ import React from 'react';
 import { motion, useReducedMotion } from 'motion/react';
 import { ShieldCheck, ArrowRight, Activity, Database, RefreshCw, ClipboardList } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 // @ts-ignore
 import heroPulseSvg from '../assets/hero-pulse.svg?raw';
 
@@ -38,6 +39,7 @@ const HeroVisual: React.FC = () => {
 
 const HeroSection: React.FC = () => {
   const reduceMotion = useReducedMotion();
+  const { isAuthenticated } = useAuth();
 
   return (
     <section className="relative pt-14 lg:pt-20 pb-16 lg:pb-20 overflow-hidden px-5 lg:px-10">
@@ -63,12 +65,14 @@ const HeroSection: React.FC = () => {
             Predict diabetes and hypertension risk earlier, with tailored guidance grounded in your clinical and lifestyle profile.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
-            <Link to="/dashboard" className="btn-primary text-center text-base lg:text-lg interactive-lift">
-              Start Assessment
+            <Link to={isAuthenticated ? '/dashboard' : '/register'} className="btn-primary text-center text-base lg:text-lg interactive-lift">
+              {isAuthenticated ? 'Go to Dashboard' : 'Start Assessment'}
             </Link>
-            <button className="btn-secondary flex-1 sm:flex-none text-base lg:text-lg interactive-lift">
-              Review Validation
-            </button>
+            {!isAuthenticated && (
+              <Link to="/login" className="btn-secondary flex-1 sm:flex-none text-base lg:text-lg interactive-lift text-center">
+                Sign In
+              </Link>
+            )}
           </div>
         </motion.div>
 
@@ -195,19 +199,23 @@ const ClinicalIntelligenceSection: React.FC = () => {
 };
 
 const CtaSection: React.FC = () => {
+  const { isAuthenticated } = useAuth();
+
   return (
     <section className="py-14 lg:py-24 px-5 lg:px-10">
       <div className="max-w-4xl mx-auto">
         <div className="panel rounded-[2rem] lg:rounded-[2.5rem] p-8 lg:p-14 text-center relative overflow-hidden reveal interactive-lift">
           <div className="relative z-10">
             <h2 className="font-manrope font-semibold text-3xl sm:text-4xl lg:text-5xl text-on-surface mb-5 lg:mb-6 tracking-tight">
-              Ready to Operationalize Preventive Care?
+              {isAuthenticated ? 'Your Dashboard Awaits' : 'Ready to Operationalize Preventive Care?'}
             </h2>
             <p className="text-on-surface-variant text-base lg:text-lg mb-8 lg:mb-10 max-w-xl mx-auto leading-relaxed">
-              Join clinicians and health-conscious individuals using GlucoPulse to stay ahead of metabolic risk progression.
+              {isAuthenticated
+                ? 'Continue monitoring your metabolic health and risk progression with clinical precision.'
+                : 'Join clinicians and health-conscious individuals using GlucoPulse to stay ahead of metabolic risk progression.'}
             </p>
-            <Link to="/dashboard" className="btn-primary inline-block text-lg interactive-lift">
-              Start My Assessment
+            <Link to={isAuthenticated ? '/dashboard' : '/register'} className="btn-primary inline-block text-lg interactive-lift">
+              {isAuthenticated ? 'Open Dashboard' : 'Start My Assessment'}
             </Link>
           </div>
 

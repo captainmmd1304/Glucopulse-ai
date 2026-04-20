@@ -1,18 +1,29 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Bell, User, Menu, X } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Bell, User, Menu, X, LogOut, LogIn } from 'lucide-react';
 import { cn } from '@/src/lib/utils';
+import { useAuth } from '../context/AuthContext';
 
 export function Navbar() {
   const [isOpen, setIsOpen] = React.useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { isAuthenticated, user, logout, isLoading } = useAuth();
 
-  const navItems = [
-    { name: 'Dashboard', path: '/dashboard' },
-    { name: 'Assessment', path: '/assessment' },
-    { name: 'Validation', path: '/validation' },
-    { name: 'Insights', path: '/insights' },
-  ];
+  const navItems = isAuthenticated
+    ? [
+        { name: 'Dashboard', path: '/dashboard' },
+        { name: 'Assessment', path: '/assessment' },
+        { name: 'Validation', path: '/validation' },
+        { name: 'Insights', path: '/insights' },
+        { name: 'Predict', path: '/predict' },
+      ]
+    : [];
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
 
   return (
     <header className="sticky top-0 z-50 border-b border-surface-container-high/80 bg-surface/75 backdrop-blur-xl">
@@ -24,30 +35,64 @@ export function Navbar() {
           </span>
         </Link>
 
-        <div className="hidden md:flex items-center gap-2 rounded-full border border-surface-container-high/70 bg-surface-container-low/70 px-2 py-1">
-          {navItems.map((item) => (
-            <Link
-              key={item.name}
-              to={item.path}
-              className={cn(
-                'interactive-lift rounded-full px-4 py-2 text-sm font-semibold transition-all duration-200',
-                location.pathname === item.path 
-                  ? 'bg-primary/15 text-primary shadow-[0_0_0_1px_rgb(42_215_196_/_0.25)]'
-                  : 'text-on-surface-variant hover:text-on-surface'
-              )}
-            >
-              {item.name}
-            </Link>
-          ))}
-        </div>
+        {/* Desktop nav links — only visible when logged in */}
+        {navItems.length > 0 && (
+          <div className="hidden md:flex items-center gap-2 rounded-full border border-surface-container-high/70 bg-surface-container-low/70 px-2 py-1">
+            {navItems.map((item) => (
+              <Link
+                key={item.name}
+                to={item.path}
+                className={cn(
+                  'interactive-lift rounded-full px-4 py-2 text-sm font-semibold transition-all duration-200',
+                  location.pathname === item.path 
+                    ? 'bg-primary/15 text-primary shadow-[0_0_0_1px_rgb(42_215_196_/_0.25)]'
+                    : 'text-on-surface-variant hover:text-on-surface'
+                )}
+              >
+                {item.name}
+              </Link>
+            ))}
+          </div>
+        )}
 
-        <div className="flex items-center gap-4">
-          <button className="hidden sm:inline-flex p-2.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low rounded-full transition-all duration-200 interactive-lift">
-            <Bell size={20} />
-          </button>
-          <button className="hidden sm:inline-flex p-2.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low rounded-full transition-all duration-200 interactive-lift">
-            <User size={20} />
-          </button>
+        <div className="flex items-center gap-3">
+          {!isLoading && isAuthenticated ? (
+            <>
+              <button className="hidden sm:inline-flex p-2.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low rounded-full transition-all duration-200 interactive-lift">
+                <Bell size={20} />
+              </button>
+
+              {/* User chip */}
+              <div className="hidden sm:flex items-center gap-2 rounded-full border border-surface-container-high/70 bg-surface-container-low/70 pl-3 pr-1 py-1">
+                <span className="text-xs font-semibold text-on-surface-variant truncate max-w-[120px]">
+                  {user?.profile?.firstName || user?.email?.split('@')[0] || 'User'}
+                </span>
+                <button
+                  onClick={handleLogout}
+                  className="p-2 text-on-surface-variant hover:text-tertiary hover:bg-tertiary/10 rounded-full transition-all duration-200"
+                  title="Sign out"
+                >
+                  <LogOut size={16} />
+                </button>
+              </div>
+            </>
+          ) : !isLoading ? (
+            <div className="hidden sm:flex items-center gap-3">
+              <Link
+                to="/login"
+                className="flex items-center gap-2 rounded-full border border-surface-container-high bg-surface-container-low px-4 py-2 text-sm font-semibold text-on-surface-variant hover:text-on-surface hover:border-primary/40 transition-all duration-200 interactive-lift"
+              >
+                <LogIn size={16} />
+                Sign In
+              </Link>
+              <Link
+                to="/register"
+                className="btn-primary text-sm interactive-lift"
+              >
+                Get Started
+              </Link>
+            </div>
+          ) : null}
 
           <button 
             className="md:hidden p-2.5 text-on-surface-variant rounded-full hover:bg-surface-container-low"
@@ -73,6 +118,34 @@ export function Navbar() {
               {item.name}
             </Link>
           ))}
+
+          {/* Mobile auth actions */}
+          {isAuthenticated ? (
+            <button
+              onClick={() => { handleLogout(); setIsOpen(false); }}
+              className="text-sm font-semibold py-2.5 px-3 rounded-xl text-tertiary hover:bg-tertiary/10 text-left flex items-center gap-2"
+            >
+              <LogOut size={16} />
+              Sign Out
+            </button>
+          ) : (
+            <>
+              <Link
+                to="/login"
+                onClick={() => setIsOpen(false)}
+                className="text-sm font-semibold py-2.5 px-3 rounded-xl text-on-surface-variant"
+              >
+                Sign In
+              </Link>
+              <Link
+                to="/register"
+                onClick={() => setIsOpen(false)}
+                className="text-sm font-semibold py-2.5 px-3 rounded-xl text-primary"
+              >
+                Create Account
+              </Link>
+            </>
+          )}
         </div>
       )}
     </header>

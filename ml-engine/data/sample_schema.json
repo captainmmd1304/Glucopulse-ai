@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GlucoPulse Diabetes Risk Prediction Input",
+  "description": "Schema for user health features used in diabetes risk prediction. Calibrated for Indian adult population.",
+  "type": "object",
+  "required": [
+    "age", "gender", "bmi", "waist_cm", "daily_steps", "sleep_hours",
+    "sedentary_hours", "stress_level", "family_history",
+    "sugary_drinks_per_week", "refined_flour_meals_per_week",
+    "indian_thali_per_week", "smoking", "alcohol"
+  ],
+  "properties": {
+    "age": {
+      "type": "number",
+      "minimum": 18,
+      "maximum": 90,
+      "description": "Age in years (Indian adult population)"
+    },
+    "gender": {
+      "type": "string",
+      "enum": ["male", "female"],
+      "description": "Biological sex"
+    },
+    "bmi": {
+      "type": "number",
+      "minimum": 12,
+      "maximum": 60,
+      "description": "Body Mass Index (kg/m²). Note: WHO Asia-Pacific cutoffs apply — overweight at 23, obese at 27.5"
+    },
+    "waist_cm": {
+      "type": "number",
+      "minimum": 50,
+      "maximum": 180,
+      "description": "Waist circumference in cm. ICMR thresholds: Male > 90cm, Female > 80cm = abdominal obesity"
+    },
+    "daily_steps": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 50000,
+      "description": "Average daily step count from pedometer/phone"
+    },
+    "sleep_hours": {
+      "type": "number",
+      "minimum": 2,
+      "maximum": 14,
+      "description": "Average nightly sleep duration in hours"
+    },
+    "sedentary_hours": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 20,
+      "description": "Daily sedentary hours (sitting, lying, desk work)"
+    },
+    "stress_level": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 10,
+      "description": "Self-reported stress level (1 = minimal, 10 = extreme)"
+    },
+    "family_history": {
+      "type": "integer",
+      "enum": [0, 1],
+      "description": "Family history of diabetes in first-degree relatives (0 = No, 1 = Yes)"
+    },
+    "sugary_drinks_per_week": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 40,
+      "description": "Number of sugary beverages consumed per week (chai with sugar, cold drinks, juices)"
+    },
+    "refined_flour_meals_per_week": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 30,
+      "description": "Meals containing refined flour (maida): naan, white bread, biscuits, pastries"
+    },
+    "indian_thali_per_week": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 21,
+      "description": "Traditional Indian thali meals per week (rice/roti + dal + sabzi + sides)"
+    },
+    "smoking": {
+      "type": "integer",
+      "enum": [0, 1],
+      "description": "Current smoker (0 = No, 1 = Yes)"
+    },
+    "alcohol": {
+      "type": "integer",
+      "enum": [0, 1],
+      "description": "Regular alcohol consumption (0 = No, 1 = Yes)"
+    }
+  },
+  "examples": [
+    {
+      "age": 35,
+      "gender": "male",
+      "bmi": 27.5,
+      "waist_cm": 94,
+      "daily_steps": 3500,
+      "sleep_hours": 5.5,
+      "sedentary_hours": 10,
+      "stress_level": 7,
+      "family_history": 1,
+      "sugary_drinks_per_week": 5,
+      "refined_flour_meals_per_week": 8,
+      "indian_thali_per_week": 10,
+      "smoking": 0,
+      "alcohol": 1
+    }
+  ]
+}

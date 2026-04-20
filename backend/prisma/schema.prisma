@@ -19,6 +19,7 @@ model User {
   readings     GlucoseReading[]
   notifications Notification[]
   activityLogs ActivityLog[]
+  predictions  PredictionResult[]
 }
 
 model Profile {
@@ -81,4 +82,19 @@ enum MealContext {
   BEFORE_MEAL
   AFTER_MEAL
   RANDOM
+}
+
+model PredictionResult {
+  id               String   @id @default(uuid())
+  userId           String
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  riskProbability  Float
+  category         String
+  confidence       Float
+  shapFactors      Json     // Array of factors
+  recommendations  Json     // Array of strings
+  inputs           Json     // The raw inputs
+  createdAt        DateTime @default(now())
+
+  @@index([userId, createdAt])
 }

@@ -1,10 +1,67 @@
+import { useState, useEffect } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
-import { ArrowLeft, Activity, BookOpen, Microscope, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, Activity, BookOpen, Microscope, ShieldCheck, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { cn } from '@/src/lib/utils';
+import { useAuth } from '../context/AuthContext';
+import { dashboardApi } from '../lib/api';
+
+interface RiskFactor {
+  label: string;
+  sub: string;
+  impact: number;
+}
+
+const driverConfig: Record<string, { tag: string; color: string }> = {
+  'Glycemic Load': { tag: 'High Impact Factor', color: 'bg-tertiary-container' },
+  'Family History': { tag: 'Moderate Impact Factor', color: 'bg-amber-500' },
+  'Lifestyle Habits': { tag: 'Low Impact Factor', color: 'bg-primary' },
+};
+
+const driverDescriptions: Record<string, string> = {
+  'Glycemic Load': 'Continuous glucose monitoring data indicates frequent post-prandial spikes exceeding 180mg/dL. High glycemic variability drives the current risk score.',
+  'Family History': 'First-degree genetic markers and reported family health history contribute to a baseline predisposed elevation in risk profile.',
+  'Lifestyle Habits': 'Regular cardiovascular activity and consistent sleep cycles are currently acting as protective factors, mitigating higher risk scores.',
+};
 
 export function ExplanationPage() {
   const reduceMotion = useReducedMotion();
+  const { token } = useAuth();
+  const [riskFactors, setRiskFactors] = useState<RiskFactor[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!token) return;
+
+    dashboardApi.getRiskFactors(token)
+      .then((res) => setRiskFactors(res.data))
+      .catch(() => {
+        // Use defaults on failure
+        setRiskFactors([
+          { label: 'Glycemic Load', sub: 'Dominant metabolic driver', impact: 64 },
+          { label: 'Family History', sub: 'Inherited susceptibility profile', impact: 22 },
+          { label: 'Lifestyle Habits', sub: 'Sleep and activity alignment', impact: 14 }
+        ]);
+      })
+      .finally(() => setLoading(false));
+  }, [token]);
+
+  if (loading) {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="w-10 h-10 text-primary animate-spin" />
+          <p className="text-sm text-on-surface-variant font-medium">Loading analysis…</p>
+        </div>
+      </div>
+    );
+  }
+
+  const drivers = riskFactors.length > 0 ? riskFactors : [
+    { label: 'Glycemic Load', sub: 'Dominant metabolic driver', impact: 64 },
+    { label: 'Family History', sub: 'Inherited susceptibility profile', impact: 22 },
+    { label: 'Lifestyle Habits', sub: 'Sleep and activity alignment', impact: 14 }
+  ];
 
   return (
     <div className="max-w-screen-2xl mx-auto px-5 lg:px-10 py-10 lg:py-12">
@@ -56,50 +113,33 @@ export function ExplanationPage() {
               Driver Breakdown
             </h2>
             <div className="space-y-10">
-              {[
-                {
-                  label: 'Glycemic load',
-                  tag: 'High Impact Factor',
-                  impact: 64,
-                  color: 'bg-tertiary-container',
-                  desc: 'Continuous glucose monitoring data indicates frequent post-prandial spikes exceeding 180mg/dL. High glycemic variability drives the current risk score.'
-                },
-                {
-                  label: 'Family history',
-                  tag: 'Moderate Impact Factor',
-                  impact: 22,
-                  color: 'bg-amber-500',
-                  desc: 'First-degree genetic markers and reported family health history contribute to a baseline predisposed elevation in risk profile.'
-                },
-                {
-                  label: 'Lifestyle habits',
-                  tag: 'Low Impact Factor',
-                  impact: 14,
-                  color: 'bg-primary',
-                  desc: 'Regular cardiovascular activity and consistent sleep cycles are currently acting as protective factors, mitigating higher risk scores.'
-                }
-              ].map((item) => (
-                <div key={item.label} className="panel-soft p-4 interactive-lift">
-                  <div className="flex justify-between items-end mb-3">
-                    <div>
-                      <h3 className="text-lg lg:text-xl font-semibold mb-1 text-on-surface">{item.label}</h3>
-                      <span className={cn('text-[10px] font-semibold uppercase tracking-[0.16em]', item.tag.includes('High') ? 'text-tertiary' : item.tag.includes('Moderate') ? 'text-amber-400' : 'text-primary')}>
-                        {item.tag}
-                      </span>
+              {drivers.map((item) => {
+                const config = driverConfig[item.label] || { tag: 'Impact Factor', color: 'bg-primary' };
+                const desc = driverDescriptions[item.label] || item.sub;
+
+                return (
+                  <div key={item.label} className="panel-soft p-4 interactive-lift">
+                    <div className="flex justify-between items-end mb-3">
+                      <div>
+                        <h3 className="text-lg lg:text-xl font-semibold mb-1 text-on-surface">{item.label}</h3>
+                        <span className={cn('text-[10px] font-semibold uppercase tracking-[0.16em]', config.tag.includes('High') ? 'text-tertiary' : config.tag.includes('Moderate') ? 'text-amber-400' : 'text-primary')}>
+                          {config.tag}
+                        </span>
+                      </div>
+                      <span className="text-2xl lg:text-3xl font-extrabold text-on-surface">{item.impact}%</span>
                     </div>
-                    <span className="text-2xl lg:text-3xl font-extrabold text-on-surface">{item.impact}%</span>
+                    <div className="h-3 w-full bg-surface-container-high rounded-full overflow-hidden">
+                      <motion.div
+                        initial={reduceMotion ? false : { width: 0 }}
+                        animate={{ width: `${item.impact}%` }}
+                        transition={reduceMotion ? { duration: 0 } : { duration: 1, ease: 'easeOut' }}
+                        className={cn('h-full rounded-full', config.color)}
+                      />
+                    </div>
+                    <p className="mt-3 text-sm lg:text-base text-on-surface-variant leading-relaxed">{desc}</p>
                   </div>
-                  <div className="h-3 w-full bg-surface-container-high rounded-full overflow-hidden">
-                    <motion.div
-                      initial={reduceMotion ? false : { width: 0 }}
-                      animate={{ width: `${item.impact}%` }}
-                      transition={reduceMotion ? { duration: 0 } : { duration: 1, ease: 'easeOut' }}
-                      className={cn('h-full rounded-full', item.color)}
-                    />
-                  </div>
-                  <p className="mt-3 text-sm lg:text-base text-on-surface-variant leading-relaxed">{item.desc}</p>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </section>
 
@@ -158,10 +198,10 @@ export function ExplanationPage() {
           <aside className="rounded-3xl border border-primary/35 bg-primary/12 p-6 lg:p-7 reveal reveal-delay-1 interactive-lift">
             <h3 className="text-xl font-semibold mb-4 text-on-surface">Recommended Next Step</h3>
             <p className="text-sm lg:text-base text-on-surface-variant leading-relaxed mb-6">
-              Based on glycemic load impact (64%), begin a fiber-first nutrition strategy to reduce insulin spikes.
+              Based on glycemic load impact, begin a fiber-first nutrition strategy to reduce insulin spikes.
             </p>
             <div className="space-y-3">
-              <button className="btn-primary w-full interactive-lift">Personalize Care Plan</button>
+              <Link to="/validation" className="btn-primary w-full interactive-lift block text-center">Personalize Care Plan</Link>
               <button className="btn-secondary w-full interactive-lift">Request Specialist Consult</button>
             </div>
           </aside>
