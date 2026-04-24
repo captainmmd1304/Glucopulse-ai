@@ -30,9 +30,6 @@ export default function App() {
               <Route path="/validation" element={
                 <ProtectedRoute><ProtocolPage /></ProtectedRoute>
               } />
-              <Route path="/insights" element={
-                <ProtectedRoute><ExplanationPage /></ProtectedRoute>
-              } />
               <Route path="/predict" element={
                 <ProtectedRoute><PredictionPage /></ProtectedRoute>
               } />

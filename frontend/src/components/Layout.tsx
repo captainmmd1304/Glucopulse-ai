@@ -15,7 +15,6 @@ export function Navbar() {
         { name: 'Dashboard', path: '/dashboard' },
         { name: 'Assessment', path: '/assessment' },
         { name: 'Validation', path: '/validation' },
-        { name: 'Insights', path: '/insights' },
         { name: 'Predict', path: '/predict' },
       ]
     : [];

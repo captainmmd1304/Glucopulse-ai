@@ -75,8 +75,16 @@ export const clinicalApi = {
   getAdherence: (token: string) =>
     request('/clinical/adherence', { token }),
 
-  exportReport: (token: string) =>
-    request('/clinical/report/export', { method: 'POST', token }),
+  exportReport: async (token: string) => {
+    const res = await fetch(`${API_BASE}/clinical/report/export`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (!res.ok) {
+      throw new Error(`Failed to export report: ${res.statusText}`);
+    }
+    return await res.blob();
+  },
 
   shareWithTeam: (token: string) =>
     request('/clinical/report/share', { method: 'POST', token }),

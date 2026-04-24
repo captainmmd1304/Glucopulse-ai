@@ -59,8 +59,19 @@ export function ProtocolPage() {
     setExportLoading(true);
     setActionMessage('');
     try {
-      const res = await clinicalApi.exportReport(token);
-      setActionMessage(res.message || 'Report generated successfully!');
+      const blob = await clinicalApi.exportReport(token);
+      
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      a.download = 'clinical_report.pdf';
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+
+      setActionMessage('Report generated successfully!');
     } catch (err: any) {
       setActionMessage(err.message || 'Export failed');
     } finally {

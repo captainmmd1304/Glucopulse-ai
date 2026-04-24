@@ -3,7 +3,7 @@ import { motion, useReducedMotion } from 'motion/react';
 import { Brain, Clipboard, Heart, Utensils, Calendar, ChevronRight, ShieldCheck, ArrowUpRight, Loader2, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { dashboardApi } from '../lib/api';
+import { dashboardApi, clinicalApi } from '../lib/api';
 
 interface OverviewData {
   progressionRisk: { score: number; trajectory: string; level: string; subtitle: string };
@@ -29,6 +29,29 @@ export function DashboardPage() {
   const [riskFactors, setRiskFactors] = useState<RiskFactor[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [exportLoading, setExportLoading] = useState(false);
+
+  const handleExport = async () => {
+    if (!token) return;
+    setExportLoading(true);
+    try {
+      const blob = await clinicalApi.exportReport(token);
+      
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      a.download = 'clinical_report.pdf';
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (err: any) {
+      alert(err.message || 'Export failed');
+    } finally {
+      setExportLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (!token) return;
@@ -149,8 +172,10 @@ export function DashboardPage() {
               <Sparkles size={18} />
               Run AI Risk Assessment
             </Link>
-            <button className="btn-secondary interactive-lift">Review Clinical Data</button>
-            <button className="btn-secondary interactive-lift">Export Report</button>
+            <Link to="/assessment" className="btn-secondary interactive-lift">Review Clinical Data</Link>
+            <button onClick={handleExport} disabled={exportLoading} className="btn-secondary interactive-lift disabled:opacity-60">
+              {exportLoading ? 'Generating...' : 'Export Report'}
+            </button>
           </div>
         </motion.article>
 
