@@ -105,3 +105,4 @@
 14:28:59 | model.loader             | INFO  |   [OK] Model loaded (XGBClassifier)
 14:28:59 | model.loader             | INFO  |   [OK] Preprocessing pipeline loaded
 14:28:59 | model.loader             | INFO  | [READY] All artifacts ready for inference.
+14:49:48 | app                      | INFO  | Shutting down ML Engine...
