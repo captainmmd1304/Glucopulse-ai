@@ -3,4 +3,15 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-export default app;
+const PORT = process.env.PORT || 5000;
+
+const server = app.listen(PORT, () => {
+  console.log(`🚀 [Server]: Running at http://localhost:${PORT}`);
+});
+
+process.on('SIGTERM', () => {
+  console.log('SIGTERM signal received: closing HTTP server');
+  server.close(() => {
+    console.log('HTTP server closed');
+  });
+});
