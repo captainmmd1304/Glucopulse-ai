@@ -7,7 +7,7 @@ const app: Application = express();
 
 // Security Middlewares
 app.use(helmet());
-app.use(cors({ origin: process.env.CLIENT_URL || '*' }));
+app.use(cors({ origin: process.env.CLIENT_URL ? process.env.CLIENT_URL.replace(/\/$/, '') : '*' }));
 
 // Development logging
 if (process.env.NODE_ENV === 'development') {
