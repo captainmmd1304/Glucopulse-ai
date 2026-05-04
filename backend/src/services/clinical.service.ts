@@ -44,7 +44,7 @@ export class ClinicalService {
       return { nutrition: baseNutrition, lifestyle: baseLifestyle };
     }
 
-    const recs: string[] = latest.recommendations;
+    const recs: string[] = latest.recommendations as string[];
 
     return {
       nutrition: {

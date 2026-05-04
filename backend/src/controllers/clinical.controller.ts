@@ -2,7 +2,6 @@ import { Response } from 'express';
 import { AuthRequest } from '../middlewares/auth.middleware';
 import { ClinicalService } from '../services/clinical.service';
 import { successResponse, errorResponse } from '../utils/responseProvider';
-import puppeteer from 'puppeteer';
 import ejs from 'ejs';
 import path from 'path';
 import prisma from '../config/db';
@@ -38,7 +37,6 @@ export const exportReport = async (req: AuthRequest, res: Response) => {
     });
 
     if (!latest) {
-      // In a real app we'd redirect or send 404, here we'll throw error
       throw new Error('No clinical assessment found. Please complete an assessment first.');
     }
 
@@ -54,19 +52,10 @@ export const exportReport = async (req: AuthRequest, res: Response) => {
       recommendations: latest.recommendations || []
     });
 
-    // 3. Generate PDF dynamically
-    const browser = await puppeteer.launch({ headless: true });
-    const page = await browser.newPage();
-    await page.setContent(html, { waitUntil: 'load' });
-    const pdfBuffer = await page.pdf({ format: 'A4', printBackground: true });
-    await browser.close();
-
-    // 4. Send document binary
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', 'attachment; filename="clinical_report.pdf"');
-    
-    // Send raw buffer instead of successResponse JSON structure
-    return res.end(pdfBuffer);
+    // 3. Send rendered HTML report (can be printed to PDF in the browser)
+    res.setHeader('Content-Type', 'text/html');
+    res.setHeader('Content-Disposition', 'inline; filename="clinical_report.html"');
+    return res.send(html);
   } catch (error: any) {
     return errorResponse(res, 500, error.message || 'Server Error');
   }
@@ -80,3 +69,4 @@ export const shareWithTeam = async (req: AuthRequest, res: Response) => {
     return errorResponse(res, 500, error.message || 'Server Error');
   }
 };
+

@@ -4,7 +4,7 @@ import prisma from '../config/db';
 
 export const generateToken = (userId: string) => {
   return jwt.sign({ id: userId }, process.env.JWT_SECRET || 'secret', {
-    expiresIn: process.env.JWT_EXPIRES_IN || '1d',
+    expiresIn: (process.env.JWT_EXPIRES_IN || '1d') as string & jwt.SignOptions['expiresIn'],
   });
 };
 
